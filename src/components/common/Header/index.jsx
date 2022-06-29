@@ -58,16 +58,16 @@ export default function Header() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
-  const stateRedux = useSelector((state) => state);
-
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
+
+
+
   return (
     <Box sx={{ flexGrow: 1 }}>
-      {console.log(stateRedux)}
       <AppBar position="static">
         <Container>
           <Toolbar>
@@ -100,7 +100,7 @@ export default function Header() {
                 </Badge>
               </IconButton>
               <IconButton
-                // onClick = {()=> dispatch(changeIsOpen())}
+                onClick={() => dispatch(changeIsOpen())}
                 size="large"
                 aria-label="show 17 new notifications"
                 color="inherit"

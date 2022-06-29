@@ -9,6 +9,8 @@ import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
+import {useDispatch} from "react-redux"
+import { isClose } from '../../../redux/reducers/openNewTaskReducer';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -48,25 +50,19 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-export default function AddTaskModal() {
-  const [open, setOpen] = React.useState(false);
+export default function AddTaskModal({openModal}) {
+  const dispatch = useDispatch()
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
   const handleClose = () => {
-    setOpen(false);
+    dispatch(isClose());
   };
 
   return (
     <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Open dialog
-      </Button>
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
-        open={open}
+        open={openModal}
       >
         <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
           New Task

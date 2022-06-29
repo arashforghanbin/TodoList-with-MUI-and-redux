@@ -5,15 +5,17 @@ const init = {
 };
 
 const isNewTaskOpenReducer = createSlice({
-  name: isNewTaskOpenReducer,
+  name: "isNewTaskOpenReducer",
   initialState: init,
   reducers: {
     changeIsOpen: (state) => {
-      console.log(state);
       state.isNewTaskOpen = true;
     },
+    isClose: (state) => {
+      state.isNewTaskOpen = false
+    }
   },
 });
 
-export const { changeIsOpen } = isNewTaskOpenReducer.actions;
+export const { changeIsOpen, isClose } = isNewTaskOpenReducer.actions;
 export default isNewTaskOpenReducer.reducer;

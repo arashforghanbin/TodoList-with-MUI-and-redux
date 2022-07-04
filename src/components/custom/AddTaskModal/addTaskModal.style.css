@@ -1,0 +1,11 @@
+@import url("https://v1.fontapi.ir/css/Vazir:400");
+
+.rmdp-input {
+  height: 3.3rem;
+  font-family: "Vazir", sans-serif;
+}
+
+.rmdp-calendar {
+  font-family: "Vazir", sans-serif;
+  font-weight: bold;
+}

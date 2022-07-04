@@ -1,12 +1,12 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
-import isNewTaskOpenReducer from "./openNewTaskReducer";
 import storage from "redux-persist/lib/storage";
 import taskReducer from "./taskReducer";
 import todoListReducer from "./todoListReducer";
+import openModalReducer from "./openModalReducer";
 
 const combinedReducers = combineReducers({
-  newTaskModal: isNewTaskOpenReducer,
+  openModalReducer,
   taskReducer,
   todoListReducer
 });

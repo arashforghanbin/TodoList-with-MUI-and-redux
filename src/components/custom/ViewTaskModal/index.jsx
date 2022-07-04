@@ -1,23 +1,14 @@
 import * as React from "react";
 import { useState } from "react";
 import PropTypes from "prop-types";
-import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch, useSelector } from "react-redux";
-import { newTaskIsClosed } from "../../../redux/reducers/openModalReducer";
-import {
-  taskNameReducer,
-  priorityReducer,
-  statusReducer,
-  deadlineReducer,
-  descriptionReducer,
-} from "../../../redux/reducers/taskReducer";
+import { viewTaskIsClosed } from "../../../redux/reducers/openModalReducer";
 import {
   Box,
   FormControl,
@@ -26,9 +17,7 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import { addTodo } from "../../../redux/reducers/todoListReducer";
 import DatePicker, { DateObject } from "react-multi-date-picker";
-import { Calendar } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import "./addTaskModal.style.css";
@@ -44,8 +33,6 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 const BootstrapDialogTitle = (props) => {
   const { children, onClose, ...other } = props;
-
-  const dispatch = useDispatch();
 
   return (
     <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
@@ -73,38 +60,14 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-
-export default function AddTaskModal({ openModal }) {
-  const [taskName, setTaskName] = useState("");
-  const [priority, setPriority] = useState("high");
-  const [status, setStatus] = useState("todo");
-  const [description, setDescription] = useState("");
-  const [deadline, setDeadline] = useState(new DateObject());
-  const [id, setId] = useState(Date.now());
+export default function ViewTaskModal({ openModal }) {
   const dispatch = useDispatch();
 
-  const handleAddTask = () => {
-    setId(Date.now());
-    const task = {
-      id,
-      taskName,
-      priority,
-      status,
-      deadline: deadline.toString(),
-      description,
-    };
-    dispatch(addTodo(task));
-    setTaskName("");
-    setPriority("high");
-    setStatus("todo");
-    setDescription("");
-    setDeadline(new DateObject());
-    dispatch(newTaskIsClosed());
+  const handleClose = () => {
+    dispatch(viewTaskIsClosed());
   };
 
-  const handleClose = () => {
-    dispatch(newTaskIsClosed());
-  };
+  const foundTask = useSelector((state) => state.todoListReducer.foundTask);
 
   return (
     <div>
@@ -118,26 +81,27 @@ export default function AddTaskModal({ openModal }) {
           id="customized-dialog-title"
           onClose={handleClose}
         >
-          New Task
+          View Task
         </BootstrapDialogTitle>
         <DialogContent
           dividers
           sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}
         >
           <TextField
+            disabled
+            value={foundTask.taskName}
             label="Task Name"
             variant="outlined"
-            onChange={(e) => setTaskName(e.target.value)}
           />
           <Box sx={{ display: "flex", gap: "2rem" }}>
             <FormControl fullWidth>
               <InputLabel id="priority-label">Priority</InputLabel>
               <Select
+                disabled
+                value={foundTask.priority}
                 labelId="priority-label"
                 id="selectPriority"
-                value={priority}
                 label="priority"
-                onChange={(e) => setPriority(e.target.value)}
               >
                 <MenuItem value="low">Low</MenuItem>
                 <MenuItem value="medium">Medium</MenuItem>
@@ -147,11 +111,11 @@ export default function AddTaskModal({ openModal }) {
             <FormControl fullWidth>
               <InputLabel id="status-label">Status</InputLabel>
               <Select
+                disabled
+                value={foundTask.status}
                 labelId="status-label"
                 id="selectStatus"
-                value={status}
                 label="Status"
-                onChange={(e) => setStatus(e.target.value)}
               >
                 <MenuItem value="todo">Todo</MenuItem>
                 <MenuItem value="doing">Doing</MenuItem>
@@ -160,32 +124,23 @@ export default function AddTaskModal({ openModal }) {
             </FormControl>
             <Box sx={{ height: "10rem" }}>
               <DatePicker
+                disabled
+                value={foundTask.deadline}
                 calendar={persian}
                 locale={persian_fa}
                 calendarPosition="bottom-right"
-                value={deadline}
-                onChange={setDeadline}
               />
             </Box>
           </Box>
           <TextField
+            disabled
+            value={foundTask.description}
             multiline
             rows={3}
             label="Task Description"
             variant="outlined"
-            onChange={(e) => setDescription(e.target.value)}
           />
         </DialogContent>
-        <DialogActions
-          sx={{ display: "flex", justifyContent: "space-between" }}
-        >
-          <Button onClick={handleClose} variant="outlined">
-            Cancel
-          </Button>
-          <Button variant="contained" autoFocus onClick={handleAddTask}>
-            Save changes
-          </Button>
-        </DialogActions>
       </BootstrapDialog>
     </div>
   );

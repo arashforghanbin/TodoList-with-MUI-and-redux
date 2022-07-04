@@ -1,0 +1,31 @@
+.priority, .status {
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 16px;
+}
+
+.redPriority, .redStatus {
+  background-color: #DC3545;
+  color: white;
+}
+
+.yellowPriority, .yellowStatus {
+  background-color: rgb(236, 208, 81);
+  color: white;
+}
+
+.greyPriority {
+  background-color: rgb(219, 219, 219);
+}
+
+
+.greenStatus {
+  background-color: rgb(35, 155, 35);
+  color: white;
+}
+
+.date {
+  border: 1px solid rgb(84, 194, 228);
+  padding: 0.5rem 1rem;
+  border-radius: 16px;
+}

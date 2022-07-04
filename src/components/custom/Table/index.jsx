@@ -24,32 +24,10 @@ import { visuallyHidden } from "@mui/utils";
 import { Button, ButtonGroup, Container } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { useSelector } from "react-redux";
-
-function createData(taskName, priority, status, deadline) {
-  return {
-    taskName,
-    priority,
-    status,
-    deadline,
-  };
-}
-
-const rows = [
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Donut", 452, 25.0, 51, 4.9),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-  createData("Honeycomb", 408, 3.2, 87, 6.5),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Jelly Bean", 375, 0.0, 94, 0.0),
-  createData("KitKat", 518, 26.0, 65, 7.0),
-  createData("Lollipop", 392, 0.2, 98, 0.0),
-  createData("Marshmallow", 318, 0, 81, 2.0),
-  createData("Nougat", 360, 19.0, 9, 37.0),
-  createData("Oreo", 437, 18.0, 63, 4.0),
-];
+import { useDispatch, useSelector } from "react-redux";
+import "./table.style.css";
+import { deleteTodo, viewTodo } from "../../../redux/reducers/todoListReducer";
+import { viewTaskIsOpen } from "../../../redux/reducers/openModalReducer";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -239,6 +217,8 @@ export default function EnhancedTable() {
 
   const todoList = useSelector((state) => state.todoListReducer.todoList);
 
+  const dispatch = useDispatch();
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -293,6 +273,69 @@ export default function EnhancedTable() {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - todoList.length) : 0;
 
+  const handlePriorityColor = (priority) => {
+    if (priority === "high") {
+      return "redPriority";
+    } else if (priority === "medium") {
+      return "yellowPriority";
+    } else if (priority === "low") {
+      return "greyPriority";
+    }
+  };
+
+  const handleStatusColor = (status) => {
+    if (status === "todo") {
+      return "redStatus";
+    } else if (status === "doing") {
+      return "yellowStatus";
+    } else if (status === "done") {
+      return "greenStatus";
+    }
+  };
+
+  const persianNumbers = [
+      /۰/g,
+      /۱/g,
+      /۲/g,
+      /۳/g,
+      /۴/g,
+      /۵/g,
+      /۶/g,
+      /۷/g,
+      /۸/g,
+      /۹/g,
+    ],
+    arabicNumbers = [
+      /٠/g,
+      /١/g,
+      /٢/g,
+      /٣/g,
+      /٤/g,
+      /٥/g,
+      /٦/g,
+      /٧/g,
+      /٨/g,
+      /٩/g,
+    ],
+    fixNumbers = function (str) {
+      if (typeof str === "string") {
+        for (let i = 0; i < 10; i++) {
+          str = str.replace(persianNumbers[i], i).replace(arabicNumbers[i], i);
+        }
+      }
+      return str;
+    };
+
+  const handleDelete = (id) => {
+    dispatch(deleteTodo(id));
+  };
+
+  const handleView = (id) => {
+    dispatch(viewTaskIsOpen())
+    const chosenTask = dispatch(viewTodo(id));
+
+  };
+
   return (
     <Container sx={{ marginTop: "2rem" }}>
       <Box sx={{ width: "100%" }}>
@@ -313,8 +356,6 @@ export default function EnhancedTable() {
                 rowCount={todoList.length}
               />
               <TableBody>
-                {/* if you don't need to support IE11, you can replace the `stableSort` call with:
-                 rows.slice().sort(getComparator(order, orderBy)) */}
                 {stableSort(todoList, getComparator(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
@@ -328,7 +369,7 @@ export default function EnhancedTable() {
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
-                        key={row.taskName}
+                        key={row.id}
                         selected={isItemSelected}
                       >
                         <TableCell padding="checkbox">
@@ -348,18 +389,44 @@ export default function EnhancedTable() {
                         >
                           {row.taskName}
                         </TableCell>
-                        <TableCell align="center">{row.priority}</TableCell>
-                        <TableCell align="center">{row.status}</TableCell>
-                        <TableCell align="center">{row.deadline}</TableCell>
+                        <TableCell align="center">
+                          <span
+                            className={`priority ${handlePriorityColor(
+                              row.priority
+                            )}`}
+                          >
+                            {row.priority}
+                          </span>
+                        </TableCell>
+                        <TableCell align="center">
+                          <span
+                            className={`status ${handleStatusColor(
+                              row.status
+                            )}`}
+                          >
+                            {row.status}
+                          </span>
+                        </TableCell>
+                        <TableCell align="center">
+                          <span className="date">
+                            {fixNumbers(row.deadline)}
+                          </span>
+                        </TableCell>
                         <TableCell align="center">
                           <ButtonGroup variant="contained">
-                            <Button sx={{ backgroundColor: "#DC3545" }}>
+                            <Button
+                              onClick={() => handleDelete(row.id)}
+                              sx={{ backgroundColor: "#DC3545" }}
+                            >
                               <DeleteIcon />
                             </Button>
                             <Button>
                               <EditIcon />
                             </Button>
-                            <Button sx={{ backgroundColor: "#6C757D" }}>
+                            <Button
+                              onClick={() => handleView(row.id)}
+                              sx={{ backgroundColor: "#6C757D" }}
+                            >
                               <VisibilityIcon />
                             </Button>
                           </ButtonGroup>

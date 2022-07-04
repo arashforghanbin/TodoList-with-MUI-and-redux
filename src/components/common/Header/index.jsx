@@ -12,7 +12,7 @@ import MoreIcon from "@mui/icons-material/MoreVert";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import { useDispatch, useSelector } from "react-redux";
-import { changeIsOpen } from "../../../redux/reducers/openNewTaskReducer";
+import { newTaskIsOpen } from "../../../redux/reducers/openModalReducer";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -95,12 +95,12 @@ export default function Header() {
                 aria-label="show 4 new mails"
                 color="inherit"
               >
-                <Badge badgeContent={4} color="error">
+                <Badge color="error">
                   <FilterAltIcon />
                 </Badge>
               </IconButton>
               <IconButton
-                onClick={() => dispatch(changeIsOpen())}
+                onClick={() => dispatch(newTaskIsOpen())}
                 size="large"
                 aria-label="show 17 new notifications"
                 color="inherit"
